@@ -1,120 +1,95 @@
-#include<stdio.h>
-
-void tupleconv(int matrix[10][10],int r,int c,int count);
+#include <stdio.h>
+struct poly
+{
+	int coeff;
+	int expo;
+}p1[10],p2[10],p3[10];
+int readPoly (struct poly []);
+int addPoly (struct poly[],struct poly[],int,int,struct poly[]);
+void display(struct poly[],int t);
 
 int main()
 {
-    int i,j,r,c,matrix1[10][10],matrix2[10][10],smatrix[20][3],count1=0,count2=0,k=1;
-    
-    printf("Enter no of rows for both matrices:");
-    scanf("%d",&r);
-    printf("Enter no of columns for both matrices");
-    scanf("%d",&c);
-    printf("Enter elements of Matrix 1:");
-    for(i=0;i<r;i++){
-        for(j=0;j<c;j++){
-            scanf("%d",&matrix1[i][j]);
-            if(matrix2[i][j]!=0)
-                count1++;
-        }
-    }
-    printf("Enter elements of Matrix 2:");
-    for(i=0;i<r;i++){
-        for(j=0;j<c;j++){
-            scanf("%d",&matrix2[i][j]);
-            if(matrix2[i][j]!=0)
-                count2++;
-        }
-    }
-    
-    printf("Matrix 1:\n");
-     for(i=0;i<r;i++){
-        for(j=0;j<c;j++){
-            printf("%d ",matrix1[i][j]);
-        }
-        printf("\n");
-    }
-    printf("Matrix 2:\n");
-     for(i=0;i<r;i++){
-        for(j=0;j<c;j++){
-            printf("%d ",matrix2[i][j]);
-        }
-        printf("\n");
-    }
-
-    printf("Tuple matrix 1:\n");
-    tupleconv(matrix1,r,c,count1);
-    printf("Tuple matrix 2:\n");
-    tupleconv(matrix2,r,c,count2);
-    
-
-    smatrix[0][0] = r;
-    smatrix[0][1] = c;
-    for(i=0;i<r;i++)
-    {
-        for(j=0;j<c;j++)
-        {
-            if(matrix1[i][j]!=0 && matrix2[i][j]!=0)
-                {
-                    smatrix[k][0] = i;
-                    smatrix[k][1] = j;
-                    smatrix[k][2] = matrix1[i][j]+ matrix2[i][j];
-                    k++;
-                }
-            else if(matrix1[i][j]!=0)
-                {
-                    smatrix[k][0] = i;
-                    smatrix[k][1] = j;
-                    smatrix[k][2] = matrix1[i][j];
-                    k++;
-                }
-            else if(matrix2[i][j]!=0)
-                {
-                    smatrix[k][0] = i;
-                    smatrix[k][1] = j;
-                    smatrix[k][2] = matrix2[i][j];
-                    k++;
-                }
-        }
-    }
-    smatrix[0][2] = k-1;
-    
-    printf("Sum of tuple matrices are:\n");
-    for(i=0;i<k;i++)
-    {
-        for(j=0;j<3;j++)
-        {
-            printf("%d ",smatrix[i][j]);
-        }
-        printf("\n");
-    }
-    return 0;
+	int t1,t2,t3;
+	printf("\nFirst polynomial\n");
+	t1 = readPoly(p1);
+	display(p1,t1);
+	printf("\nSecond polynomial: \n");
+	t2 = readPoly(p2);
+	display(p2,t2);
+	t3 = addPoly(p1,p2,t1,t2,p3);
+	printf("\nResultant polynomial: \n");
+	display(p3,t3);
+	return 0;
+}
+int readPoly(struct poly p[10])
+{
+	int i,t;
+	printf("Enter the no. of terms of the polynomial: ");
+	scanf("%d",&t);
+	for (i=0;i<t;i++)
+	{
+		printf("Enter coeffecient: \n");
+		scanf("%d",&p[i].coeff);
+		printf("Enter exponent: \n");
+		scanf("%d",&p[i].expo);
+	}
+	return t;
+}
+void display(struct poly p[10],int t)
+{
+	int i=0;
+	printf("\n");
+	for (i=0;i<t-1;i++)
+	{
+		printf("%d(x^%d) + ",p[i].coeff,p[i].expo);
+	}
+	printf("%d(x^%d) ",p[t-1].coeff,p[t-1].expo);
+}
+int addPoly(struct poly p1[10],struct poly p2[10],int t1,int t2,struct poly p3[10])
+{
+	int i=0,j=0,k=0;
+	while (i<t1 && j<t2)
+	{
+		if(p1[i].expo == p2[j].expo)
+		{
+			p3[k].expo = p1[i].expo;
+			p3[k].coeff = p1[i].coeff + p2[j].coeff;
+			i++;
+			j++;
+			k++;
+		}
+		else if(p1[i].expo > p2[j].expo)
+		{
+			p3[k].expo = p1[i].expo;
+			p3[k].coeff = p1[i].coeff;
+			i++;
+			k++;
+		}
+		else
+		{
+			p3[k].expo = p2[j].expo;
+			p3[k].coeff = p2[j].coeff;
+			j++;
+			k++;
+		}
+	}
+	while (i<t1)
+	{
+		p3[k].expo = p1[i].expo;
+		p3[k].coeff = p1[i].coeff;
+		i++;
+		k++;
+	}
+	while (j<t2)
+	{
+		p3[k].expo = p2[j].expo;
+		p3[k].coeff = p2[j].coeff;
+		j++;
+		k++;
+	}
+	return k;
 }
 
-void tupleconv(int matrix[10][10], int r, int c, int count)
-{
-    int i,j,tmatrix[20][3],k=1;
-    tmatrix[0][0] = r;
-    tmatrix[0][1] = c;
-    tmatrix[0][2] = count;
-    for(i=0;i<r;i++)
-    {
-        for(j=0;j<c;j++)
-        {
-            if(matrix[i][j]!=0)
-            {
-                tmatrix[k][0] = i;
-                tmatrix[k][1] = j;
-                tmatrix[k][2] = matrix[i][j];
-                k++;
-            }
-        }
-    }
-    
-     for(i=0;i<k;i++){
-        for(j=0;j<3;j++){
-            printf("%d ",tmatrix[i][j]);
-        }
-        printf("\n");
-    }
- }
+
+
